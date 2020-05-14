@@ -58,10 +58,30 @@ Example with profiling using `likwid-perfctr`:
 
 To run you also need to load above Intel and Likwid modules!
 
+## Emmy
 Run miniMD with default config file (lennard jones potential) `in.lj.miniMD`:
 * Request interactive job on Emmy with fixed frequency and likwid profiling:
-`$ qsub -l nodes=1:ppn=40:f2.2:likwid  -l walltime=00:30:00`
+`$ qsub -I -l nodes=1:ppn=40:f2.2:likwid  -l walltime=00:30:00`
 
-TBC
+* Load required modules:
+`module load intel64` (may use specific version)
+`module load likwid`
+
+* Run benchmark:
+`cd ./data`
+`likwid-mpirun -np 4 -mpi intelmpi ../miniMD-ICC`
+`likwid-mpirun -np 4 -mpi intelmpi ../miniMD-ICC -s 20` (with different system size)
+`likwid-mpirun -np 4 -mpi intelmpi ../miniMD-ICC -s 20 -o 1 --yaml_screen` (with yaml output to stdout)
 
 
+## Meggie
+On meggie likwid-mpirun currently does not work.
+
+* Request interactive job on Meggie with fixed frequency and likwid profiling:
+
+* Load required modules:
+`module load intel64`
+
+* Run benchmark:
+`cd ./data`
+`mpirun -np 4 ../miniMD-ICC` (Other options same as on emmy)
