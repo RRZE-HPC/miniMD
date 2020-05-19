@@ -19,8 +19,8 @@ The Agenda section is a scratchpad area for planning and Todo list
 ------------------------------------------------------------------------------>
 # Agenda
 1. Scaling and performance meassurement (handle MiniMD as "blackbox")
-   1.1 TODO
-   1.2 TODO
+   1. TODO
+   2. TODO
 2. Code analysis of the MPI communication
 <!--
 Example for referencing an image:
@@ -199,7 +199,7 @@ Example for table:
 Verbatim Text
 ```
 -->
-
+Performance of MiniMD on one Socket of one Node (Emmy) depending on the number of MPI processes:
 ![Example Graph](graph.png?raw=true "Example Meassurement")
 
 <!-----------------------------------------------------------------------------
