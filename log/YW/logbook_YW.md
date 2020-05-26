@@ -19,8 +19,9 @@ The Agenda section is a scratchpad area for planning and Todo list
 ------------------------------------------------------------------------------>
 # Agenda
 1. Scaling and performance meassurement (handle MiniMD as "blackbox")
-   1. TODO
-   2. TODO
+   1. Scaling within one socket
+   2. Scaling within one node (two sockets)
+   3. Scaling accross multiple nodes
 2. Code analysis of the MPI communication
 <!--
 Example for referencing an image:
@@ -39,7 +40,6 @@ and maintained during the project.
 * Home HPC center:
 * Contact HPC center:
    * Name: Yannick Wallerer
-   * Fon:
    * E-Mail: yannick.wallerer@fau.de
 
 <!-----------------------------------------------------------------------------
@@ -89,16 +89,13 @@ MiniMD applies strong scaling, i.e. the problem size does **not** change with th
 -->
 
 
-<!-----------------------------------------------------------------------------
-Describe in detail how to configure and setup the testcases(es)
------------------------------------------------------------------------------->
-## Testcase description
-
-<!-----------------------------------------------------------------------------
-All steps required to run the testcase and control affinity for application
------------------------------------------------------------------------------->
 ## How to run software
+On Emmy, the application can be run with likwid-mpirun from the data directory:
+`$ likwid-mpirun [Likwid-Options] ../miniMD-ICC [MiniMD-Options]`
 
+Relevant options for likwid-mpirun:
+* `-np 4`: specify 4 MPI-Processes
+* `-nperdomain S:10`: specify at most 10 MPI processes per socket
 
 <!-----------------------------------------------------------------------------
 END BLOCK PREAMBLE
@@ -177,12 +174,24 @@ Application benchmarking runs. What experiment was done? Add results or
 reference plots in directory session-<NAME-TAG>-<ID>. Number all sections
 consecutivley such that every section has a unique ID.
 ------------------------------------------------------------------------------>
+
+## Testcases
+### Testcase 1.1: Scaling on one node
+Performance of MiniMD on one Node (of Emmy) depending on the number of MPI processes:
+
+![Example Graph](test_1_1.png?raw=true "Example Meassurement")
+
+
+### Testcase 1.2: Scaling accross multiple nodes
+Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this meassurement. In other words, for each meassurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.
+
+![Example Graph](test_1_2.png?raw=true "Example Meassurement")
+
+<!--
 ## Result <NAME-TAG>-<ID>
-
 ### Problem: <DESCRIPTION>
-
-
 ### Measurement <NAME-TAG>-<ID>.1
+-->
 <!--
 Example for table:
 
@@ -199,8 +208,7 @@ Example for table:
 Verbatim Text
 ```
 -->
-Performance of MiniMD on one Socket of one Node (Emmy) depending on the number of MPI processes:
-![Example Graph](graph.png?raw=true "Example Meassurement")
+
 
 <!-----------------------------------------------------------------------------
 Document the initial performance which serves as baseline for further progress
