@@ -179,13 +179,25 @@ consecutivley such that every section has a unique ID.
 ### Testcase 1.1: Scaling on one node
 Performance of MiniMD on one Node (of Emmy) depending on the number of MPI processes:
 
-![Example Graph](test_1_1.png?raw=true "Example Meassurement")
+![Test1](test_1_1.png?raw=true "Test1")
 
+An observation of the utilization of the different cores (using the tool `top`) of the node showed, that `likwid-mpirun` assigns the n MPI processes on the first n CPUs of the node (e.g. when 4 MPI processes are specified, CPU 0 - 3 are used).
+As expected, the application scales well until 20 MPI processes. With more MPI processes, the performance decreases as then one or more CPUs must then execute more than one process.
 
 ### Testcase 1.2: Scaling accross multiple nodes
 Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this meassurement. In other words, for each meassurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.
 
-![Example Graph](test_1_2.png?raw=true "Example Meassurement")
+**Used simulation settings:** 
+131072 atoms (default if no -s option is used)
+10000  time steps
+
+**Meassurement:**
+
+![Speedup](default_10000steps_speedup.png?raw=true "Speedup")
+
+![Performance](default_10000steps_total_performance.png?raw=true "Performance")
+
+![Thread Performance](default_10000steps_thread_performance.png?raw=true "Thread Performance")
 
 <!--
 ## Result <NAME-TAG>-<ID>
