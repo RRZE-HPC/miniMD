@@ -194,8 +194,12 @@ In order to achieve more reliable results, each meassurement has been done 3 tim
 
 **Meassurement:**
 
-![Speedup](default_10000steps_speedup.png?raw=true "Speedup")<br/>
-![Performance](default_10000steps_total_performance.png?raw=true "Performance")<br/>
+![Speedup](default_10000steps_speedup.png?raw=true "Speedup")
+<br/>
+
+![Performance](default_10000steps_total_performance.png?raw=true "Performance")
+<br/>
+
 ![Thread Performance](default_10000steps_thread_performance.png?raw=true "Thread Performance")
 
 <!--
