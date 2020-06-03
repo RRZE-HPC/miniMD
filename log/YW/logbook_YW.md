@@ -48,21 +48,23 @@ Formulate a clear and specific performance target
 ## Target
 Performance Analysis of MiniMD with focus on MPI communication.
 
-<!--
-## Customer Info
--->
-<!--
-* Name: <CUSTOMERNAME>
-* E-Mail: john.doe@foo.bar
-* Fon: <PHONENUMBER>
-* Web: <URL>
--->
 
-<!-----------------------------------------------------------------------------
-All steps required to build the software including dependencies
------------------------------------------------------------------------------->
 ## How to build software
-See README.md.
+See README.md.  
+Additional notes on the build process:  
+As the focus here lies on analyzing the MPI mechanism, no SIMD vectorization is applied.  
+**Used Compiler:**  
+Intel C-Compiler (version 19.0.5.281)  
+Compiler options: `-O3 -no-vec` 
+
+## Hardware
+All tests are done on one of the following clusters at RRZE:
+### Emmy
+* CPU name:	Intel(R) Xeon(R) CPU E5-2660 v2 @ 2.20GHz
+* CPU type:	Intel Xeon IvyBridge EN/EP/EX processor
+### Meggie
+* CPU name:	Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+* CPU type:	Intel Xeon Broadwell EN/EP/EX processor
 
 
 ## Application Info
@@ -82,11 +84,7 @@ MiniMD applies strong scaling, i.e. the problem size does **not** change with th
 * Level of yaml output: `-o / --yaml_output <int>`
 * Write yaml output to stdout: `--yaml_screen`
 * set input file to be used: `-i / --input_file <string>` (default: in.lj.miniMD)
-<!--
-* Name: <APPLICATIONNAME>
-* Domain: <APPLICATIONDOMAIN>
-* Version: <VERSION>
--->
+
 
 
 ## How to run software
@@ -98,85 +96,11 @@ Relevant options for likwid-mpirun:
 * `-nperdomain S:10`: specify at most 10 MPI processes per socket
 
 <!-----------------------------------------------------------------------------
-END BLOCK PREAMBLE
------------------------------------------------------------------------------->
-
-<!-----------------------------------------------------------------------------
-START BLOCK ANALYST - This block is required for any new analyst taking over
-the project
------------------------------------------------------------------------------->
-
-<!--
-# Transfer to Analyst: <NAME-TAG>
--->
-<!--
-* Start date: DD/MM/YYYY
-* Contact HPC center:
-   * Name:
-   * Fon:
-   * E-Mail:
--->
-<!-----------------------------------------------------------------------------
-###############################################################################
-START BLOCK BENCHMARKING - Run helper script machine-state.sh and store results
-in directory session-<ID> named <hostname>.txt. Document everything that you
-consider to be relevant for performance.
-###############################################################################
------------------------------------------------------------------------------->
-
-<!--
-## Benchmarking <NAME-TAG>
-
-### Testsystem
--->
-<!--
-* Host/Clustername:
-* Cluster Info URL:
-* CPU type:
-* Memory capacity:
-* Number of cores per node:
-* Interconnect:
--->
-<!--
-### Software Environment
--->
-<!--
-**Compiler**:
-* Vendor:
-* Version:
-
-**Libraries**:
-* <LIBRARYNAME>:
-   * Version:
-
-**OS**:
-* Distribution:
-* Version:
-* Kernel version:
--->
-<!-----------------------------------------------------------------------------
-Create a runtime profile. Which tool was used? How was the profile created.
-Describe and discuss the runtime profile.
------------------------------------------------------------------------------->
-<!--
-## Runtime Profile <NAME-TAG>-<ID>
--->
-
-<!-----------------------------------------------------------------------------
-Perform a static code review.
------------------------------------------------------------------------------->
-<!--
-## Code review <NAME-TAG>-<ID>
--->
-
-<!-----------------------------------------------------------------------------
-Application benchmarking runs. What experiment was done? Add results or
-reference plots in directory session-<NAME-TAG>-<ID>. Number all sections
-consecutivley such that every section has a unique ID.
+Test Documentation:
 ------------------------------------------------------------------------------>
 
 ## Testcases
-### Testcase 1.1: Scaling on one node
+### Testcase 1.1: Scaling on one node (Emmy)
 Performance of MiniMD on one Node (of Emmy) depending on the number of MPI processes:
 
 ![Test1](test_1_1.png?raw=true "Test1")
@@ -184,7 +108,7 @@ Performance of MiniMD on one Node (of Emmy) depending on the number of MPI proce
 An observation of the utilization of the different cores (using the tool `top`) of the node showed, that `likwid-mpirun` assigns the n MPI processes on the first n CPUs of the node (e.g. when 4 MPI processes are specified, CPU 0 - 3 are used).
 As expected, the application scales well until 20 MPI processes. With more MPI processes, the performance decreases as then one or more CPUs must then execute more than one process.
 
-### Testcase 1.2: Scaling accross multiple nodes
+### Testcase 1.2: Scaling accross multiple nodes (Emmy)
 Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this meassurement. In other words, for each meassurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.  
 In order to achieve more reliable results, each meassurement has been done 3 times. Afterwards, the average has been formed over the distinct results.
 
