@@ -62,6 +62,7 @@ All tests are done on one of the following clusters at RRZE:
 ### Emmy
 * CPU name:	Intel(R) Xeon(R) CPU E5-2660 v2 @ 2.20GHz
 * CPU type:	Intel Xeon IvyBridge EN/EP/EX processor
+* If not stated otherwise, turbo mode was not used. The frequency is then fixed at 2.2 GHz
 ### Meggie
 * CPU name:	Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
 * CPU type:	Intel Xeon Broadwell EN/EP/EX processor
@@ -103,28 +104,26 @@ Test Documentation:
 ### Testcase 1.1: Scaling on one node (Emmy)
 Performance of MiniMD on one Node (of Emmy) depending on the number of MPI processes:
 
-![Test1](test_1_1.png?raw=true "Test1")
+![Test1.1.1](testcase_1_1_single_node/single_node_speedup.png?raw=true "Test1.1.1")
 
 An observation of the utilization of the different cores (using the tool `top`) of the node showed, that `likwid-mpirun` assigns the n MPI processes on the first n CPUs of the node (e.g. when 4 MPI processes are specified, CPU 0 - 3 are used).
-As expected, the application scales well until 20 MPI processes. With more MPI processes, the performance decreases as then one or more CPUs must then execute more than one process.
+Beyond 20 MPI processes, a remarkable performance loss can be observed (see also the corresponding drop in the parallel efficiency below). This is expected, as then one or more CPU cores have to execute more than one MPI process.
+
+![Test1.1.2](testcase_1_1_single_node/single_node_parallel_efficiency.png?raw=true "Test1.1.2")
 
 ### Testcase 1.2: Scaling accross multiple nodes (Emmy)
 Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this meassurement. In other words, for each meassurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.  
 In order to achieve more reliable results, each meassurement has been done 3 times. Afterwards, the average has been formed over the distinct results.
 
-**Used simulation settings:** 
-* 131072 atoms (default if no -s option is used)  
+**Used simulation settings:**  
 * 10000  time steps
 
 **Meassurement:**
 
-![Speedup](default_10000steps_speedup.png?raw=true "Speedup")
+![Test1.2.1](testcase_1_2_many_node/many_node_speedup.png?raw=true "Test1.2.1")
 <br/>
 
-![Performance](default_10000steps_total_performance.png?raw=true "Performance")
-<br/>
-
-![Thread Performance](default_10000steps_thread_performance.png?raw=true "Thread Performance")
+![Test1.2.2](testcase_1_2_many_node/many_node_parallel_efficiency.png?raw=true "Test1.2.2")
 
 <!--
 ## Result <NAME-TAG>-<ID>
