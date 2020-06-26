@@ -18,7 +18,7 @@ for time tracking is [Watson](http://tailordev.github.io/Watson/).
 The Agenda section is a scratchpad area for planning and Todo list
 ------------------------------------------------------------------------------>
 # Agenda
-1. Scaling and performance meassurement (handle MiniMD as "blackbox")
+1. Scaling and performance measurement (handle MiniMD as "blackbox")
    1. Scaling within one socket
    2. Scaling within one node (two sockets)
    3. Scaling accross multiple nodes
@@ -112,18 +112,32 @@ Beyond 20 MPI processes, a remarkable performance loss can be observed (see also
 ![Test1.1.2](testcase_1_1_single_node/single_node_parallel_efficiency.png?raw=true "Test1.1.2")
 
 ### Testcase 1.2: Scaling accross multiple nodes (Emmy)
-Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this meassurement. In other words, for each meassurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.  
-In order to achieve more reliable results, each meassurement has been done 3 times. Afterwards, the average has been formed over the distinct results.
+Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this measurement. In other words, for each measurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.  
+In order to achieve more reliable results, each measurement has been done 3 times. Afterwards, the average has been formed over the distinct results.
 
 **Used simulation settings:**  
 * 10000  time steps
 
-**Meassurement:**
+**Measurement:**
 
 ![Test1.2.1](testcase_1_2_many_node/many_node_speedup.png?raw=true "Test1.2.1")
 <br/>
 
 ![Test1.2.2](testcase_1_2_many_node/many_node_parallel_efficiency.png?raw=true "Test1.2.2")
+
+
+### Testcase 2.1: Weak scaling on one node (Emmy)
+In weak scaling, the problem size is increased linearly with the number of processes:
+
+![Test2.1.1](testcase_1_3_weak_scaling/problem_size_single.png?raw=true "Test2.1.1")
+<br/>
+This lead to the following performance measurement:  
+
+![Test2.1.2](testcase_1_3_weak_scaling/performance_single_node.png?raw=true "Test2.1.2")
+
+
+### Testcase 2.2: Weak scaling on multiple nodes (Emmy)
+
 
 <!--
 ## Result <NAME-TAG>-<ID>
