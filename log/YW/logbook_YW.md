@@ -138,7 +138,10 @@ This lead to the following performance measurement:
 
 ### Testcase 2.2: Weak scaling on multiple nodes (Emmy)
 
+![Test2.2.1](testcase_1_3_weak_scaling/performance_total_multiple_nodes.png?raw=true "Test2.2.1")
+<br/>
 
+![Test2.2.2](testcase_1_3_weak_scaling/performance_thread_multiple_nodes.png?raw=true "Test2.2.2")
 <!--
 ## Result <NAME-TAG>-<ID>
 ### Problem: <DESCRIPTION>
