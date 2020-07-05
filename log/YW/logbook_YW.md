@@ -104,12 +104,12 @@ Test Documentation:
 ### Testcase 1.1: Scaling on one node (Emmy)
 Performance of MiniMD on one Node (of Emmy) depending on the number of MPI processes:
 
-![Test1.1.1](testcase_1_1_single_node/single_node_speedup.png?raw=true "Test1.1.1")
+![Test1.1.1](testcase_1_1_single_node/speedup_single_node.png?raw=true "Test1.1.1")
 
 An observation of the utilization of the different cores (using the tool `top`) of the node showed, that `likwid-mpirun` assigns the n MPI processes on the first n CPUs of the node (e.g. when 4 MPI processes are specified, CPU 0 - 3 are used).
 Beyond 20 MPI processes, a remarkable performance loss can be observed (see also the corresponding drop in the parallel efficiency below). This is expected, as then one or more CPU cores have to execute more than one MPI process.
 
-![Test1.1.2](testcase_1_1_single_node/single_node_parallel_efficiency.png?raw=true "Test1.1.2")
+![Test1.1.2](testcase_1_1_single_node/par_eff_single_node.png?raw=true "Test1.1.2")
 
 ### Testcase 1.2: Scaling accross multiple nodes (Emmy)
 Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this measurement. In other words, for each measurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.  
@@ -120,10 +120,10 @@ In order to achieve more reliable results, each measurement has been done 3 time
 
 **Measurement:**
 
-![Test1.2.1](testcase_1_2_many_node/many_node_speedup.png?raw=true "Test1.2.1")
+![Test1.2.1](testcase_1_2_many_node/speedup_multi_node.png?raw=true "Test1.2.1")
 <br/>
 
-![Test1.2.2](testcase_1_2_many_node/many_node_parallel_efficiency.png?raw=true "Test1.2.2")
+![Test1.2.2](testcase_1_2_many_node/par_eff_multi_node.png?raw=true "Test1.2.2")
 
 
 ### Testcase 2.1: Weak scaling on one node (Emmy)
@@ -134,10 +134,14 @@ In weak scaling, the problem size is increased linearly with the number of proce
 This lead to the following performance measurement:  
 
 ![Test2.1.2](testcase_1_3_weak_scaling/performance_single_node.png?raw=true "Test2.1.2")
+<br/>
 
+![Test2.1.3](testcase_1_3_weak_scaling/performance_thread_single_node.png?raw=true "Test2.1.3")
 
 ### Testcase 2.2: Weak scaling on multiple nodes (Emmy)
 
+Weak scaling over multiple nodes (using 20 MPI processes per node):
+<br/>
 ![Test2.2.1](testcase_1_3_weak_scaling/performance_total_multiple_nodes.png?raw=true "Test2.2.1")
 <br/>
 
