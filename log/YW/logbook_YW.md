@@ -22,7 +22,9 @@ The Agenda section is a scratchpad area for planning and Todo list
    1. Scaling within one socket
    2. Scaling within one node (two sockets)
    3. Scaling accross multiple nodes
-2. Code analysis of the MPI communication
+2. Weak scaling
+3. Strong & weak scaling (on one and many nodes) on Meggie
+4. MPI analysis using ITAC
 <!--
 Example for referencing an image:
 
@@ -66,7 +68,7 @@ All tests are done on one of the following clusters at RRZE:
 ### Meggie
 * CPU name:	Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
 * CPU type:	Intel Xeon Broadwell EN/EP/EX processor
-
+* If not stated otherwise, turbo mode was not used. The frequency is then fixed at 2.2 GHz
 
 ## Application Info
 
@@ -104,12 +106,12 @@ Test Documentation:
 ### Testcase 1.1: Scaling on one node (Emmy)
 Performance of MiniMD on one Node (of Emmy) depending on the number of MPI processes:
 
-![Test1.1.1](testcase_1_1_single_node/speedup_single_node.png?raw=true "Test1.1.1")
+![Test1.1.1](images/testcase_1_1_single_node/speedup_single_node.png?raw=true "Test1.1.1")
 
 An observation of the utilization of the different cores (using the tool `top`) of the node showed, that `likwid-mpirun` assigns the n MPI processes on the first n CPUs of the node (e.g. when 4 MPI processes are specified, CPU 0 - 3 are used).
 Beyond 20 MPI processes, a remarkable performance loss can be observed (see also the corresponding drop in the parallel efficiency below). This is expected, as then one or more CPU cores have to execute more than one MPI process.
 
-![Test1.1.2](testcase_1_1_single_node/par_eff_single_node.png?raw=true "Test1.1.2")
+![Test1.1.2](images/testcase_1_1_single_node/par_eff_single_node.png?raw=true "Test1.1.2")
 
 ### Testcase 1.2: Scaling accross multiple nodes (Emmy)
 Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this measurement. In other words, for each measurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.  
@@ -120,20 +122,20 @@ In order to achieve more reliable results, each measurement has been done 3 time
 
 **Measurement:**
 
-![Test1.2.1](testcase_1_2_many_node/speedup_multi_node.png?raw=true "Test1.2.1")
+![Test1.2.1](images/testcase_1_2_many_node/speedup_multi_node.png?raw=true "Test1.2.1")
 <br/>
 
-![Test1.2.2](testcase_1_2_many_node/par_eff_multi_node.png?raw=true "Test1.2.2")
+![Test1.2.2](images/testcase_1_2_many_node/par_eff_multi_node.png?raw=true "Test1.2.2")
 
 
 ### Testcase 2.1: Weak scaling on one node (Emmy)
 In weak scaling, the problem size is increased linearly with the number of processes:
 
-![Test2.1.1](testcase_1_3_weak_scaling/problem_size_single.png?raw=true "Test2.1.1")
+![Test2.1.1](images/testcase_1_3_weak_scaling/problem_size_single.png?raw=true "Test2.1.1")
 <br/>
 This lead to the following performance measurement:  
 
-![Test2.1.2](testcase_1_3_weak_scaling/performance_single_node.png?raw=true "Test2.1.2")
+![Test2.1.2](images/testcase_1_3_weak_scaling/performance_single_node.png?raw=true "Test2.1.2")
 <br/>
 
 ![Test2.1.3](testcase_1_3_weak_scaling/performance_thread_single_node.png?raw=true "Test2.1.3")
@@ -142,83 +144,31 @@ This lead to the following performance measurement:
 
 Weak scaling over multiple nodes (using 20 MPI processes per node):
 <br/>
-![Test2.2.1](testcase_1_3_weak_scaling/performance_total_multiple_nodes.png?raw=true "Test2.2.1")
+![Test2.2.1](images/testcase_1_3_weak_scaling/performance_total_multiple_nodes.png?raw=true "Test2.2.1")
 <br/>
 
-![Test2.2.2](testcase_1_3_weak_scaling/performance_thread_multiple_nodes.png?raw=true "Test2.2.2")
-<!--
-## Result <NAME-TAG>-<ID>
-### Problem: <DESCRIPTION>
-### Measurement <NAME-TAG>-<ID>.1
--->
-<!--
-Example for table:
+![Test2.2.2](images/testcase_1_3_weak_scaling/performance_thread_multiple_nodes.png?raw=true "Test2.2.2")
 
-| NP | runtime |
-|----|---------|
-| 1  | 2558.89 |
-| 2  | 1425.20 |
-| 4  | 741.97  |
-| 8  | 449.23  |
-| 10 | 371.39  |
-| 20 | 233.90  |
+### Testcase 3.1: Strong scaling on Meggie
+### Testcase 3.1.1: Single node
+![Test3.1.1](images/testcase_3_meggie/strong_scaling/speedup_single.png?raw=true "Test3.1.1")
+<br/>
+![Test3.1.1](images/testcase_3_meggie/strong_scaling/par_eff_single.png?raw=true "Test3.1.1")
+<br/>
 
-```
-Verbatim Text
-```
--->
+### Testcase 3.1.2: Multiple nodes
+
+### Testcase 3.2: Weak scaling on Meggie
+### Testcase 3.2.1: Single node
+![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_single_perf.png?raw=true "Test3.2.1")
+<br/>
+![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_single_perf_thread.png?raw=true "Test3.2.1")
+<br/>
+
+### Testcase 3.2.2: Multiple nodes
 
 
-<!-----------------------------------------------------------------------------
-Document the initial performance which serves as baseline for further progress
-and is used to compute the achieved speedup. Document exactly how the baseline
-was created.
------------------------------------------------------------------------------->
-<!--
-## Baseline
--->
-<!--
-* Time to solution:
-* Performance:
--->
 
-<!-----------------------------------------------------------------------------
-Explain which tool was used and how the measurements were done. Store and
-reference the results. If applicable discuss and explain profiles.
------------------------------------------------------------------------------->
-<!--
-## Performance Profile <NAME-TAG>-<ID>.2
--->
-
-<!-----------------------------------------------------------------------------
-Analysis and insights extracted from benchmarking results. Planning of more
-benchmarks.
------------------------------------------------------------------------------->
-<!--
-## Analysis <NAME-TAG>-<ID>.3
--->
-
-
-<!-----------------------------------------------------------------------------
-Document all changes with  filepath:linenumber and explanation what was changed
-and why. Create patch if applicable and store patch in referenced file.
------------------------------------------------------------------------------->
-<!--
-## Optimisation <NAME-TAG>-<ID>.4: <DESCRIPTION>
--->
-
-
-<!-----------------------------------------------------------------------------
-###############################################################################
-END BLOCK BENCHMARKING
-###############################################################################
------------------------------------------------------------------------------->
-
-<!-----------------------------------------------------------------------------
-Wrap up the final result and discuss the speedup.
-Optional: Document how much time was spent. A simple python command line tool
-for time tracking is [Watson](http://tailordev.github.io/Watson/).
------------------------------------------------------------------------------->
 ## Summary
 
 * Time to solution:
