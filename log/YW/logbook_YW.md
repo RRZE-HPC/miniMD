@@ -157,6 +157,11 @@ Weak scaling over multiple nodes (using 20 MPI processes per node):
 <br/>
 
 ### Testcase 3.1.2: Multiple nodes
+![Test3.1.2](images/testcase_3_meggie/strong_scaling/speedup_multi.png?raw=true "Test3.1.2")
+<br/>
+![Test3.1.2](images/testcase_3_meggie/strong_scaling/par_eff_multi.png?raw=true "Test3.1.2")
+<br/>
+
 
 ### Testcase 3.2: Weak scaling on Meggie
 ### Testcase 3.2.1: Single node
@@ -166,7 +171,10 @@ Weak scaling over multiple nodes (using 20 MPI processes per node):
 <br/>
 
 ### Testcase 3.2.2: Multiple nodes
-
+![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_multi_perf.png?raw=true "Test3.2.1")
+<br/>
+![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_multi_perf_thread.png?raw=true "Test3.2.1")
+<br/>
 
 
 ## Summary
