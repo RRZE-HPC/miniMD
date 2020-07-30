@@ -54,10 +54,9 @@ Performance Analysis of MiniMD with focus on MPI communication.
 ## How to build software
 See README.md.  
 Additional notes on the build process:  
-As the focus here lies on analyzing the MPI mechanism, no SIMD vectorization is applied.  
 **Used Compiler:**  
 Intel C-Compiler (version 19.0.5.281)  
-Compiler options: `-O3 -no-vec` 
+Compiler options: `-O3 -xAVX` 
 
 ## Hardware
 All tests are done on one of the following clusters at RRZE:
@@ -76,7 +75,7 @@ All tests are done on one of the following clusters at RRZE:
 MiniMD applies strong scaling, i.e. the problem size does **not** change with the number of MPI processes. The problem size (number of atoms) can be adapted with the `-s` option (see below). Additionally, the number of timesteps can be changed in the input file (`data/in.lj.miniMD`).
 
 ### Relevant MiniMD options
-* Full-neighbor variant: `--half_neigh 1` (preferably used over half-neighbor variant)
+* Full-neighbor variant: `--half_neigh 0` (preferably used over half-neighbor variant)
 * Apply different problem sizes (number of atoms):
    * 4k   : `-s 10`
    * 16k  : `-s 16`
@@ -84,6 +83,8 @@ MiniMD applies strong scaling, i.e. the problem size does **not** change with th
    * 108k : `-s 30`
    * 256k : `-s 40`
    * 864k : `-s 60`
+* Alternatively to the options above, the problem size can be set manually in all spatial dimension using the options `-nx`, `-ny` and `-nz`
+* Set the number of timesteps: `-n 1000` (here: 1000 timesteps)
 * Level of yaml output: `-o / --yaml_output <int>`
 * Write yaml output to stdout: `--yaml_screen`
 * set input file to be used: `-i / --input_file <string>` (default: in.lj.miniMD)
@@ -98,23 +99,36 @@ Relevant options for likwid-mpirun:
 * `-np 4`: specify 4 MPI-Processes
 * `-nperdomain S:10`: specify at most 10 MPI processes per socket
 
+Alternatively, Intel mpirun can be used on both clusters. Relevant options are:
+* `-np 100`: specify 100 MPI processes
+* `-ppn 20`: specify at most 20 processes per node
+* `-env I_MPI_PIN_PROCESSOR_LIST 0,1,2,3,4,5,6,7,8,9`: do explicit pinning (here, for each node, the first 10 cores are used)
+* `-trace`: activate trace output, which can be analyzed by the intel traceanalyzer later
+
+Typically, a series of scaling runs is done using shell scripts. Therefore, such an example shell script ("example_script_emmy.sh") for the use on emmy is also provided. It can be used as follows:
+`$ qsub -l nodes=40:ppn=40:f2.2,walltime=01:00:00 example_script_emmy.sh`
+
 <!-----------------------------------------------------------------------------
 Test Documentation:
 ------------------------------------------------------------------------------>
 
 ## Testcases
-### Testcase 1.1: Scaling on one node (Emmy)
-Performance of MiniMD on one Node (of Emmy) depending on the number of MPI processes:
+### Testcase 1.1: Strong scaling on one node
+Performance of MiniMD on one Node depending on the number of MPI processes:
 
-![Test1.1.1](images/testcase_1_1_single_node/speedup_single_node.png?raw=true "Test1.1.1")
+![Test1.1.1](images/testcase_1_1_strong_single/speedup_strong_single.png?raw=true "Test1.1.1")  
+<br/>
 
-An observation of the utilization of the different cores (using the tool `top`) of the node showed, that `likwid-mpirun` assigns the n MPI processes on the first n CPUs of the node (e.g. when 4 MPI processes are specified, CPU 0 - 3 are used).
-Beyond 20 MPI processes, a remarkable performance loss can be observed (see also the corresponding drop in the parallel efficiency below). This is expected, as then one or more CPU cores have to execute more than one MPI process.
-
-![Test1.1.2](images/testcase_1_1_single_node/par_eff_single_node.png?raw=true "Test1.1.2")
+![Test1.1.2](images/testcase_1_1_strong_single/par_eff_strong_single.png?raw=true "Test1.1.2")
+<br/>
+As it can be seen from the graphs above, within one node, both emmy and meggie achieve almost identical speedup curves. However, this doesn't mean, that both machines achieve the same performance, which can be seen in the following graph:
+<br/>
+![Test1.1.3](images/testcase_1_1_strong_single/performance_strong_single.png?raw=true "Test1.1.3")
+<br/>
+We see, that Meggie performs better than Emmy although both worked at a frequency of 2.2 GHz and although for both runs the **same** binaries were used. Apparently, the program handling on an instruction level on Meggie is better than on Emmy. 
 
 ### Testcase 1.2: Scaling accross multiple nodes (Emmy)
-Performance of MiniMD using multiple nodes on Emmy. Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this measurement. In other words, for each measurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` was used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket.  
+ Each Node contains 20 cores. To make use the full power of each node, 20 MPI-processes were chosen as granularity in this measurement. In other words, for each measurement a set of n nodes was used to run n * 20 MPI processes. To make sure these processes are distributed equally, the likwid-mpirun option `-nperdomain S:10` can used. This way, each node (containing two sockets with 10 cores each) is assigned 10 MPI-Processes per socket. When working with Intel mpirun, the options `-ppn 20` and / or explicit process pinning should be used. 
 In order to achieve more reliable results, each measurement has been done 3 times. Afterwards, the average has been formed over the distinct results.
 
 **Used simulation settings:**  
@@ -122,66 +136,55 @@ In order to achieve more reliable results, each measurement has been done 3 time
 
 **Measurement:**
 
-![Test1.2.1](images/testcase_1_2_many_node/speedup_multi_node.png?raw=true "Test1.2.1")
+![Test1.2.1](images/testcase_1_2_strong_multi/comp_strong_multi.png?raw=true "Test1.2.1")
 <br/>
 
-![Test1.2.2](images/testcase_1_2_many_node/par_eff_multi_node.png?raw=true "Test1.2.2")
-
-
-### Testcase 2.1: Weak scaling on one node (Emmy)
-In weak scaling, the problem size is increased linearly with the number of processes:
-
-![Test2.1.1](images/testcase_1_3_weak_scaling/problem_size_single.png?raw=true "Test2.1.1")
-<br/>
-This lead to the following performance measurement:  
-
-![Test2.1.2](images/testcase_1_3_weak_scaling/performance_single_node.png?raw=true "Test2.1.2")
+![Test1.2.2](images/testcase_1_2_strong_multi/comp_strong_multi_par_eff.png?raw=true "Test1.2.2")
 <br/>
 
-![Test2.1.3](testcase_1_3_weak_scaling/performance_thread_single_node.png?raw=true "Test2.1.3")
+In the graphs we see, that for scaling over multiple nodes, Meggie is capable of achieving higher speedup rates than Emmy. This can probably be explaind with the faster network used in Meggie.
 
-### Testcase 2.2: Weak scaling on multiple nodes (Emmy)
+### Testcase 2.1: Weak scaling on one node
+In weak scaling, the problem size is increased linearly with the number of processes. As this isn't supported by MiniMD itself, shell scripts for the use on Emmy and Meggie are provided (see directory "weak_scaling_scripts").
+
+Example usage on Emmy: `$ qsub -l nodes=1:ppn=40:f2.2,walltime=01:00:00 weak_single.sh` 
+Example usage on Meggie: `$ sbatch weak_single_meggie.sh` (here, specifications about the used nodes are included in the shell script)
+
+For the weak scaling runs, a basic problemsize of 16 x 16 x 16 was used with 10000 timesteps:
+
+![Test2.1.1](images/testcase_2_1_weak_single/weak_single.png?raw=true "Test2.1.1")  
+<br/>
+
+![Test2.1.2](images/testcase_2_1_weak_single/weak_single_thread.png?raw=true "Test2.1.2")
+
+### Testcase 2.2: Weak scaling on multiple nodes
 
 Weak scaling over multiple nodes (using 20 MPI processes per node):
-<br/>
-![Test2.2.1](images/testcase_1_3_weak_scaling/performance_total_multiple_nodes.png?raw=true "Test2.2.1")
+
+![Test2.2.1](images/testcase_2_2_weak_multi/weak_multi.png?raw=true "Test2.2.1")  
 <br/>
 
-![Test2.2.2](images/testcase_1_3_weak_scaling/performance_thread_multiple_nodes.png?raw=true "Test2.2.2")
+![Test2.2.2](images/testcase_2_2_weak_multi/weak_multi_thread.png?raw=true "Test2.2.2")
 
-### Testcase 3.1: Strong scaling on Meggie
-### Testcase 3.1.1: Single node
-![Test3.1.1](images/testcase_3_meggie/strong_scaling/speedup_single.png?raw=true "Test3.1.1")
-<br/>
-![Test3.1.1](images/testcase_3_meggie/strong_scaling/par_eff_single.png?raw=true "Test3.1.1")
-<br/>
+### Testcase 3: Further MPI analysis using ITAC
+Depending on the number of processes, MiniMD performs 1D, 2D or 3D domain decompostion according to the following strategy:
+* Iterate over all possible domain decompositions
+* For each potential decomposition, calculate the surface of the subdomains (reason: a smaller subdomain surface leads to a smaller data volume which must be communicated between the processes in each timestep)
+* Accept the decomposition with the smallest surface
 
-### Testcase 3.1.2: Multiple nodes
-![Test3.1.2](images/testcase_3_meggie/strong_scaling/speedup_multi.png?raw=true "Test3.1.2")
-<br/>
-![Test3.1.2](images/testcase_3_meggie/strong_scaling/par_eff_multi.png?raw=true "Test3.1.2")
-<br/>
+In general, a higher dimensional decomposition leads to a smaller subdomain surface. Therefore, 3D decomposition is used preferably. 1D decomposition is only used if both other decomposition types fail (e.g. for prime numbers).  
 
+Example for 1D decomposition (using 19 processes):
 
-### Testcase 3.2: Weak scaling on Meggie
-### Testcase 3.2.1: Single node
-![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_single_perf.png?raw=true "Test3.2.1")
-<br/>
-![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_single_perf_thread.png?raw=true "Test3.2.1")
+![Test3.1.1](images/testcase_3_itac/plot_message_19proc_4k.png?raw=true "Test3.1.1")  
 <br/>
 
-### Testcase 3.2.2: Multiple nodes
-![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_multi_perf.png?raw=true "Test3.2.1")
-<br/>
-![Test3.2.1](images/testcase_3_meggie/weak_scaling/weak_multi_perf_thread.png?raw=true "Test3.2.1")
+Example for 2D decomposition (using 20 processes): 
+
+![Test3.1.1](images/testcase_3_itac/plot_message_20proc_4k.png?raw=true "Test3.1.1")  
 <br/>
 
 
-## Summary
-
-* Time to solution:
-* Performance:
-* Speedup:
 
 <!--
 ## Effort
